@@ -19,12 +19,16 @@ pipeline{
         }
         stage('Test'){
             steps{
+                dir('pipeline-ci-demo'){
                 sh "mvn test"
+                }
             }
         }
         stage('Package'){
             steps{
+                dir('pipeline-ci-demo') {
                 sh "mvn package"
+                }
             }
         }
     }
