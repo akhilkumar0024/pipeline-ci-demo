@@ -7,22 +7,12 @@ pipeline{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/akhilkumar0024/pipeline-ci-demo.git']])
             }
         }
-        // stage('Build'){
-        //     steps{
-        //         dir('pipeline-ci-demo/pipeline-ci-demo') {
-        //         sh 'ls'
-        //         sh 'mvn clean compile'
-        //     }
-            
-        // }
-        // }
-        stage('Debug') {
-            steps {
-                sh '''
-                pwd 
-                echo "===== Workspace ====="
-                find . -maxdepth 4
-                '''
+        stage('Build'){
+            steps{
+                dir('pipeline-ci-demo') {
+                sh 'ls'
+                sh 'mvn clean compile'
+                }
             }
         }
         stage('Test'){
