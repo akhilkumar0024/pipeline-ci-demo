@@ -11,6 +11,8 @@ pipeline{
             steps{
                 dir('pipeline-ci-demo') {
                 sh 'ls'
+                sh 'java -version'
+                sh 'javac -version'
                 sh 'mvn clean compile'
                 }
             }
