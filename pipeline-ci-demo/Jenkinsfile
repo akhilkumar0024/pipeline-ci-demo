@@ -11,6 +11,7 @@ pipeline{
             steps{
                 sh "ls"
                 sh "cd pipeline-ci-demo"
+                sh "ls"
                 sh "pwd"
                 sh "mvn clean compile"
             }
