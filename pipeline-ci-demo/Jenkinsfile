@@ -9,12 +9,11 @@ pipeline{
         }
         stage('Build'){
             steps{
-                sh "ls"
-                sh "cd pipeline-ci-demo"
-                sh "ls"
-                sh "pwd"
-                sh "mvn clean compile"
+                dir('pipeline-ci-demo/pipeline-ci-demo') {
+                sh 'mvn clean compile'
             }
+            
+        }
         }
         stage('Test'){
             steps{
