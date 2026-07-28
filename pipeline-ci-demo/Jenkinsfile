@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+
+    stages{
+        stage('Checkout'){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/akhilkumar0024/pipeline-ci-demo.git']])
+            }
+        }
+        stage('Build'){
+            steps{
+                sh "mvn clean compile"
+            }
+        }
+        stage('Test'){
+            steps{
+                sh "mvn test"
+            }
+        }
+        stage('Package'){
+            steps{
+                sh "mvn package"
+            }
+        }
+    }
+}
