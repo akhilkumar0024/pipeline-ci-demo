@@ -1,33 +1,59 @@
-pipeline{
+pipeline {
     agent any
 
-    stages{
-        stage('Checkout'){
-            steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/akhilkumar0024/pipeline-ci-demo.git']])
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/akhilkumar0024/pipeline-ci-demo.git']]
+                )
             }
         }
-        stage('Build'){
-            steps{
+
+        stage('Build') {
+            steps {
                 dir('pipeline-ci-demo') {
-                sh 'ls'
-                sh 'java -version'
-                sh 'javac -version'
-                sh 'mvn clean compile'
+                    sh 'mvn clean compile'
                 }
             }
         }
-        stage('Test'){
-            steps{
-                dir('pipeline-ci-demo'){
-                sh "mvn test"
+
+        stage('Test') {
+            steps {
+                dir('pipeline-ci-demo') {
+                    sh 'mvn test'
                 }
             }
         }
-        stage('Package'){
-            steps{
+
+        stage('Static Code Analysis') {
+            steps {
                 dir('pipeline-ci-demo') {
-                sh "mvn package"
+                    withSonarQubeEnv('sonar-qube') {
+                        sh '''
+                        mvn sonar:sonar \
+                          -Dsonar.organization=akhilkumar0024 \
+                          -Dsonar.projectKey=akhilkumar0024_pipeline-ci-demo
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Code Coverage') {
+            steps {
+                dir('pipeline-ci-demo') {
+                    // JaCoCo will go here
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('pipeline-ci-demo') {
+                    sh 'mvn package'
                 }
             }
         }
