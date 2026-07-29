@@ -45,7 +45,12 @@ pipeline {
         stage('Code Coverage') {
             steps {
                 dir('pipeline-ci-demo') {
-                    // JaCoCo will go here
+                    sh 'mvn jacoco:report'
+                    jacoco(
+                        execPattern: 'pipeline-ci-demo/target/jacoco.exec',
+                        classPattern: 'pipeline-ci-demo/target/classes',
+                        sourcePattern: 'pipeline-ci-demo/src/main/java'
+                    )
                 }
             }
         }
@@ -54,6 +59,14 @@ pipeline {
             steps {
                 dir('pipeline-ci-demo') {
                     sh 'mvn package'
+                }
+            }
+        }
+
+        stage('Achive Build'){
+            steps{
+                dir('pipeline-ci-demo'){
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
                 }
             }
         }
