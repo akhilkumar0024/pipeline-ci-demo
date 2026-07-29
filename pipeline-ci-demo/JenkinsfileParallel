@@ -1,0 +1,85 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/akhilkumar0024/pipeline-ci-demo.git']]
+                )
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('pipeline-ci-demo') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+        stage('Parallel Stages') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        dir('pipeline-ci-demo') {
+                            sh 'mvn test'
+                        }
+                    }
+                }
+
+                stage('Integration Tests') {
+                    steps {
+                        dir('pipeline-ci-demo') {
+                            sh 'mvn verify'
+                        }
+                    }
+                }
+
+                stage('SonarQube Analysis') {
+                    steps {
+                        dir('pipeline-ci-demo') {
+                            withSonarQubeEnv('sonar-qube') {
+                                sh '''
+                                mvn sonar:sonar \
+                                  -Dsonar.organization=akhilkumar0024 \
+                                  -Dsonar.projectKey=akhilkumar0024_pipeline-ci-demo
+                                '''
+                            }
+                        }
+                    }
+                }
+
+                stage('Code Coverage') {
+                    steps {
+                        dir('pipeline-ci-demo') {
+                            sh 'mvn jacoco:report'
+                            jacoco(
+                                execPattern: 'pipeline-ci-demo/target/jacoco.exec',
+                                classPattern: 'pipeline-ci-demo/target/classes',
+                                sourcePattern: 'pipeline-ci-demo/src/main/java'
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('pipeline-ci-demo') {
+                    sh 'mvn package'
+                }
+            }
+        }
+
+        stage('Archive Build') {
+            steps {
+                dir('pipeline-ci-demo') {
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }
+        }
+    }
+}
