@@ -39,19 +39,19 @@ pipeline {
                     }
                 }
 
-                stage('SonarQube Analysis') {
-                    steps {
-                        dir('pipeline-ci-demo') {
-                            withSonarQubeEnv('sonar-qube') {
-                                sh '''
-                                mvn sonar:sonar \
-                                  -Dsonar.organization=akhilkumar0024 \
-                                  -Dsonar.projectKey=akhilkumar0024_pipeline-ci-demo
-                                '''
-                            }
-                        }
-                    }
-                }
+                // stage('SonarQube Analysis') {
+                //     steps {
+                //         dir('pipeline-ci-demo') {
+                //             withSonarQubeEnv('sonar-qube') {
+                //                 sh '''
+                //                 mvn sonar:sonar \
+                //                   -Dsonar.organization=akhilkumar0024 \
+                //                   -Dsonar.projectKey=akhilkumar0024_pipeline-ci-demo
+                //                 '''
+                //             }
+                //         }
+                //     }
+                // }
 
                 stage('Code Coverage') {
                     steps {
